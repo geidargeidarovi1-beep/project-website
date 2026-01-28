@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>საკვების შემოწირულობის აპარატი - IoT პროექტი</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0A84FF;
+            --primary-dark: #0066CC;
+            --accent: #FF6B35;
+            --dark: #0D1117;
+            --dark-card: #161B22;
+            --dark-border: #30363D;
+            --light-text: #C9D1D9;
+            --lighter-text: #8B949E;
+            --success: #3FB950;
+            --warning: #FFA657;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Georgian', sans-serif;
+            background: var(--dark);
+            color: var(--light-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background Effects */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--dark-border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--dark-border) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            z-index: -1;
+            animation: gridScroll 20s linear infinite;
+        }
+
+        @keyframes gridScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        .gradient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .gradient-orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: 10%;
+            left: -200px;
+        }
+
+        .gradient-orb-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            bottom: 10%;
+            right: -250px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--dark-border);
+            padding: 1rem 0;
+            z-index: 100;
+            animation: slideDown 0.6s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        nav .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 0 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #FFFFFF, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--lighter-text);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        .stat-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(10, 132, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--lighter-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 5rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--light-text);
+        }
+
+        .section-header .accent {
+            color: var(--accent);
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--lighter-text);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Project Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .info-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.3s;
+        }
+
+        .info-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(10, 132, 255, 0.2);
+        }
+
+        .info-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .info-card p {
+            color: var(--lighter-text);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--light-text);
+        }
+
+        .info-card li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Components Section */
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .component-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .component-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .component-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .component-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .component-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--light-text);
+        }
+
+        .component-spec {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .component-card p {
+            color: var(--lighter-text);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Timeline */
+        .timeline {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--dark-border);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .timeline-item:nth-child(even) .timeline-date {
+            grid-column: 2;
+            grid-row: 1;
+            text-align: left;
+        }
+
+        .timeline-date {
+            text-align: right;
+            padding: 2rem;
+        }
+
+        .timeline-phase {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-period {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .timeline-content {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 2rem;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .timeline-content:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(10, 132, 255, 0.2);
+        }
+
+        .timeline-content h4 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--light-text);
+        }
+
+        .timeline-content p {
+            color: var(--lighter-text);
+            line-height: 1.7;
+        }
+
+        /* Budget Table */
+        .budget-table {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .budget-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .budget-table th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .budget-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .budget-table tr:hover {
+            background: rgba(10, 132, 255, 0.05);
+        }
+
+        .budget-table .total-row {
+            background: var(--accent);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .budget-table .total-row td {
+            color: white;
+            border-bottom: none;
+        }
+
+        /* Standards Section */
+        .standards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .standard-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .standard-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .standard-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .standard-card p {
+            color: var(--lighter-text);
+            line-height: 1.7;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .team-member {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+
+        .member-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .member-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--light-text);
+        }
+
+        .member-role {
+            color: var(--lighter-text);
+            font-size: 0.9rem;
+        }
+
+        .supervisors {
+            text-align: center;
+            padding: 2rem;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+        }
+
+        .supervisors h4 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        /* Benefits Section */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .benefit-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .benefit-card h4 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .benefit-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefit-card li {
+            padding: 0.7rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--light-text);
+        }
+
+        .benefit-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-card);
+            border-top: 1px solid var(--dark-border);
+            padding: 3rem 0;
+            margin-top: 5rem;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .footer-content p {
+            color: var(--lighter-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-year {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .components-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 968px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                grid-template-columns: 1fr;
+                margin-left: 40px;
+            }
+
+            .timeline-item:nth-child(even) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-date {
+                grid-column: 1;
+            }
+
+            .timeline-date {
+                text-align: left;
+                padding: 1rem 0;
+            }
+
+            .standards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="bg-grid"></div>
+    <div class="gradient-orb gradient-orb-1"></div>
+    <div class="gradient-orb gradient-orb-2"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">საკვების შემოწირულობის აპარატი</div>
+            <ul>
+                <li><a href="#home">მთავარი</a></li>
+                <li><a href="#about">პროექტის შესახებ</a></li>
+                <li><a href="#components">კომპონენტები</a></li>
+                <li><a href="#timeline">გრაფიკი</a></li>
+                <li><a href="#budget">ბიუჯეტი</a></li>
+                <li><a href="#team">გუნდი</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>საკვების შემოწირულობის IoT აპარატი</h1>
+                <p class="hero-subtitle">
+                    ავტომატიზირებული, გამჭვირვალე და უსაფრთხო სისტემა საკვების დონაციების შეგროვებისთვის
+                </p>
+
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">ხელმისაწვდომობა</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">გამჭვირვალობა</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">ადამიანური შეცდომა</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">245₾</div>
+                        <div class="stat-label">პროექტის ბიუჯეტი</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>პროექტის <span class="accent">შესახებ</span></h2>
+                <p>IoT ტექნოლოგიაზე დაფუძნებული ინოვაციური გადაწყვეტა სოციალური დახმარებისთვის</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>აბსტრაქტი</h3>
+                    <p>
+                        სოციალური დახმარების პროცესებში ერთ-ერთი მნიშვნელოვანი გამოწვევაა საკვების 
+                        შემოწირულობის არაეფექტური და არაგამჭვირვალე მართვა. ტრადიციული დონაციის 
+                        მეთოდები ხშირ შემთხვევაში მოითხოვს ადამიანურ რესურსს, ფიზიკურ კონტაქტს და 
+                        დამატებით ზედამხედველობას.
+                    </p>
+                    <p>
+                        წინამდებარე პროექტი წარმოადგენს საკვების შემოწირულობის ავტომატიზირებულ აპარატს, 
+                        რომელიც უზრუნველყოფს დონაციის პროცესის გამარტივებას, უსაფრთხოებასა და გამჭვირვალობას.
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <h3>ძირითადი მიზნები</h3>
+                    <ul>
+                        <li>დონაციის შეგროვების პროცესის ავტომატიზაცია</li>
+                        <li>ტრანზაქციების უსაფრთხო და გამჭვირვალე დამუშავება</li>
+                        <li>რეალურ დროში მონაცემთა გადაცემა და მონიტორინგი</li>
+                        <li>ადამიანური შუამავლების აღმოფხვრა</li>
+                        <li>მასშტაბური გადაწყვეტის შექმნა</li>
+                        <li>IoT ტექნოლოგიის დემონსტრირება სოციალურ სფეროში</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>არსებული სისტემების პრობლემები</h3>
+                    <ul>
+                        <li>რეალურ დროში მონიტორინგის არარსებობა</li>
+                        <li>დამოკიდებულება ადამიანურ პერსონალზე</li>
+                        <li>შეზღუდული ხელმისაწვდომობა სამუშაო საათების გარეთ</li>
+                        <li>არასაკმარისი მონაცემთა შეგროვება</li>
+                        <li>მანიპულაციის პოტენციალი</li>
+                        <li>მაღალი ოპერაციული ხარჯები</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>ტექნოლოგიური გადაწყვეტა</h3>
+                    <p>
+                        სისტემა აერთიანებს გადახდის მოდულებს (მონეტები და RFID/NFC), ცენტრალურ 
+                        კონტროლერს (ESP32), უსაფრთხო კომუნიკაციის პროტოკოლებს (MQTT + TLS) და 
+                        ავტომატურ დისპენსერს.
+                    </p>
+                    <p>
+                        ინტერნეტ ნივთების ტექნოლოგიის გამოყენებით, აპარატი შექმნის უწყვეტ კავშირს 
+                        დონორებს, საქველმოქმედო ორგანიზაციებსა და ბენეფიციარებს შორის.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Components Section -->
+    <section id="components">
+        <div class="container">
+            <div class="section-header">
+                <h2>სისტემის <span class="accent">კომპონენტები</span></h2>
+                <p>მაღალი ხარისხის IoT აპარატურა და სენსორები</p>
+            </div>
+
+            <div class="components-grid">
+                <div class="component-card">
+                    <div class="component-icon">🖥️</div>
+                    <h4>ESP32 DevKit</h4>
+                    <div class="component-spec">38 Pin • Wi-Fi • Bluetooth</div>
+                    <p>
+                        ცენტრალური დამუშავების ერთეული, რომელიც მართავს სენსორების შეყვანებს, 
+                        კოორდინირებას უწევს გადახდის ვალიდაციას და მართავს ქსელურ კომუნიკაციას. 
+                        ჩაშენებული Wi-Fi შესაძლებლობა უზრუნველყოფს უწყვეტ კავშირს MQTT ბროკერთან.
+                    </p>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-icon">💳</div>
+                    <h4>RFID Reader RC522</h4>
+                    <div class="component-spec">13.56 MHz • NFC Protocol • SPI</div>
+                    <p>
+                        უკონტაქტო გადახდის მოდული, რომელიც მხარს დაუჭერს სტანდარტულ RFID და NFC 
+                        პროტოკოლებს. საშუალებას მისცემს მომხმარებლებს განახორციელონ დონაციები 
+                        საბანკო ბარათების ან მობილური გადახდების გამოყენებით.
+                    </p>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-icon">🪙</div>
+                    <h4>Coin Acceptor CH-926</h4>
+                    <div class="component-spec">Multi-currency • 12V • Pulse Output</div>
+                    <p>
+                        მრავალვალუტიანი მონეტების მიმღები, რომელიც იყენებს მექანიკურ და ოპტიკურ 
+                        სენსორებს მონეტის ჩაგდების გამოსავლენად, ავთენტურობის გადასამოწმებლად და 
+                        დონაციის საერთო თანხის გამოსათვლელად.
+                    </p>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-icon">🔐</div>
+                    <h4>Electromagnetic Lock</h4>
+                    <div class="component-spec">DC 5V/12V • Solenoid SM0415-3</div>
+                    <p>
+                        ელექტრომაგნიტური საკეტი, რომელიც უზრუნველყოფს საკვების ავტომატურ და 
+                        უსაფრთხო გაცემას წარმატებული დონაციის ტრანზაქციის შემდეგ. 
+                        მექანიკური საიმედოობა და სწრაფი საპასუხო დრო.
+                    </p>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-icon">⌨️</div>
+                    <h4>Matrix Keypad 4x4</h4>
+                    <div class="component-spec">16 Button • Membrane • ABS Plastic</div>
+                    <p>
+                        მატრიცული კლავიატურა მომხმარებლის შეყვანისთვის და სისტემის კონფიგურაციისთვის. 
+                        16 ღილაკი უზრუნველყოფს ფუნქციონალურობას PIN კოდების შეყვანისა და 
+                        ადმინისტრაციული წვდომისთვის.
+                    </p>
+                </div>
+
+                <div class="component-card">
+                    <div class="component-icon">⚡</div>
+                    <h4>Power Supply</h4>
+                    <div class="component-spec">DC 12V • 10A • 120W</div>
+                    <p>
+                        სტაბილური ენერგომომარაგება ყველა სისტემის კომპონენტისთვის. DC-DC კონვერტერი 
+                        უზრუნველყოფს 5V-იან ძაბვას ESP32-სთვის და RFID წამკითხველისთვის, ხოლო 
+                        12V იყენება მონეტების მიმღებისა და საკეტისთვის.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section style="background: linear-gradient(180deg, transparent, rgba(10, 132, 255, 0.02));">
+        <div class="container">
+            <div class="section-header">
+                <h2>სისტემის <span class="accent">არქიტექტურა</span></h2>
+                <p>პროგრამული და აპარატური ინტეგრაცია</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>MQTT პროტოკოლი v5.0</h3>
+                    <p>
+                        Message Queuing Telemetry Transport - მსუბუქი publish-subscribe არქიტექტურა, 
+                        რომელიც იდეალურად შეეფერება IoT აპლიკაციებს. უზრუნველყოფს ეფექტურ 
+                        მონაცემთა გადაცემას მინიმალური ბანდგენის მოხმარებით და შესანიშნავი 
+                        საიმედოობით არასტაბილური ქსელის პირობებში.
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <h3>TLS დაშიფვრა</h3>
+                    <p>
+                        ყველა მონაცემი დაშიფრული იქნება Transport Layer Security გამოყენებით 
+                        არაავტორიზებული წვდომის, მონაცემთა გადაჭერის ან მანიპულაციის თავიდან 
+                        ასაცილებლად. უზრუნველყოფს დონაციის ჩანაწერებისა და მომხმარებლის 
+                        ინფორმაციის მთლიანობას და კონფიდენციალურობას.
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <h3>მონაცემთა სტრუქტურა</h3>
+                    <p>ყოველი ტრანზაქცია შეიცავს:</p>
+                    <ul>
+                        <li>დროის შტამპი</li>
+                        <li>გადახდის მეთოდი (მონეტა/ბარათი)</li>
+                        <li>დონაციის თანხა</li>
+                        <li>მოწყობილობის ID</li>
+                        <li>ტრანზაქციის სტატუსი</li>
+                        <li>მომხმარებლის იდენტიფიკატორი (არასავალდებულო)</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>ღრუბლოვანი სერვერი</h3>
+                    <p>
+                        სერვერის აპლიკაცია ამუშავებს MQTT შეტყობინებებს, ახდენს მონაცემების 
+                        ვალიდაციას და ინახავს ტრანზაქციების ჩანაწერებს მონაცემთა ბაზაში. 
+                        ვებ-დაშბორდი უზრუნველყოფს რეალურ დროში ხილვადობას სისტემის ოპერაციებში, 
+                        დონაციების ჯამებსა და მოწყობილობების სტატუსში.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline">
+        <div class="container">
+            <div class="section-header">
+                <h2>პროექტის <span class="accent">გრაფიკი</span></h2>
+                <p>16-კვირიანი განვითარების პროცესი</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <div class="timeline-phase">ფაზა 1</div>
+                        <div class="timeline-period">კვირები 1-4 | მარტი</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h4>სენსორების ინტეგრაცია და პროგრამირება</h4>
+                        <p>
+                            მონეტების მიმღები მოდულის და RFID/NFC წამკითხველის კონფიგურაცია და ტესტირება. 
+                            ESP32 firmware-ის შემუშავება. სენსორების წაკითხვისა და ვალიდაციის ძირითადი 
+                            ლოგიკის იმპლემენტაცია. კომპონენტებს შორის სერიული კომუნიკაციის პროტოკოლების 
+                            დამყარება და ინდივიდუალური მოდულების საწყისი ტესტირება.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <div class="timeline-phase">ფაზა 2</div>
+                        <div class="timeline-period">კვირები 4-7 | მარტი-აპრილი</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h4>აპარატული აწყობა</h4>
+                        <p>
+                            ფიზიკური კორპუსის დიზაინი და ფაბრიკაცია. ელექტრონული კომპონენტების დამონტაჟება 
+                            კორპუსში. ყველა ელექტრული კავშირის გაყვანა ელექტრული სქემის შესაბამისად. 
+                            გაცემის მექანიზმის დაყენება. ენერგომომარაგების სისტემის ინტეგრაცია. 
+                            დისპენსერის მექანიკური ტესტირება.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <div class="timeline-phase">ფაზა 3</div>
+                        <div class="timeline-period">კვირები 6-9 | აპრილი-მაისი</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h4>MQTT აპლიკაციის შემუშავება</h4>
+                        <p>
+                            MQTT ბროკერის ინფრასტრუქტურის დაყენება. TLS დაშიფვრის ფენის იმპლემენტაცია. 
+                            მონაცემთა გადაცემის პროტოკოლების შემუშავება. სერვერის მხარის აპლიკაციის შექმნა 
+                            მონაცემების მისაღებად. მონაცემთა ბაზის სქემის დიზაინი და იმპლემენტაცია. 
+                            ვებ-დაშბორდის შემუშავება. დასაწყისიდან ბოლომდე მონაცემთა ნაკადის ტესტირება.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <div class="timeline-phase">ფაზა 4</div>
+                        <div class="timeline-period">კვირები 9-13 | მაისი-ივნისი</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h4>სისტემის ტესტირება</h4>
+                        <p>
+                            კომპონენტების ინტეგრაციის ტესტირება. სრული სისტემის ფუნქციური ტესტირება. 
+                            უსაფრთხოებისა და პენეტრაციის ტესტირება. მუშაობისა და სტრესის ტესტირება. 
+                            მომხმარებლის მიღების ტესტირება. შეცდომების გამოსწორება და ოპტიმიზაცია. 
+                            დოკუმენტაციის დასრულება. საბოლოო პრეზენტაციის მომზადება.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Budget Section -->
+    <section id="budget" style="background: linear-gradient(180deg, rgba(255, 107, 53, 0.02), transparent);">
+        <div class="container">
+            <div class="section-header">
+                <h2>პროექტის <span class="accent">ბიუჯეტი</span></h2>
+                <p>დეტალური ხარჯების გადანაწილება</p>
+            </div>
+
+            <div class="budget-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>კომპონენტი</th>
+                            <th>რაოდენობა</th>
+                            <th>ერთეულის ფასი (₾)</th>
+                            <th>ჯამი (₾)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ESP32 DevKit 30pin</td>
+                            <td>1</td>
+                            <td>9.20</td>
+                            <td>11.54</td>
+                        </tr>
+                        <tr>
+                            <td>RFID Reader RC522</td>
+                            <td>1</td>
+                            <td>24.51</td>
+                            <td>35.10</td>
+                        </tr>
+                        <tr>
+                            <td>Coin Acceptor CH-926</td>
+                            <td>1</td>
+                            <td>76.31</td>
+                            <td>76.31</td>
+                        </tr>
+                        <tr>
+                            <td>DC 12V Electronic Cabinet Lock</td>
+                            <td>1</td>
+                            <td>5.37</td>
+                            <td>22.65</td>
+                        </tr>
+                        <tr>
+                            <td>Arduino Jumper Wires</td>
+                            <td>1</td>
+                            <td>3.15</td>
+                            <td>3.74</td>
+                        </tr>
+                        <tr>
+                            <td>Connector Kit JST/Dupont</td>
+                            <td>1</td>
+                            <td>38.71</td>
+                            <td>59.18</td>
+                        </tr>
+                        <tr>
+                            <td>DC 5V/12V Mini Electromagnetic Lock (Solenoid SM0415-3)</td>
+                            <td>1</td>
+                            <td>8.12</td>
+                            <td>8.12</td>
+                        </tr>
+                        <tr>
+                            <td>Matrix Switch Keyboard 4x4</td>
+                            <td>1</td>
+                            <td>3.63</td>
+                            <td>6.37</td>
+                        </tr>
+                        <tr>
+                            <td>DC 12V Power Supply (10A)</td>
+                            <td>1</td>
+                            <td>6.55</td>
+                            <td>22.85</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="3">სულ:</td>
+                            <td>245.86 ₾</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p style="text-align: center; color: var(--lighter-text); margin-top: 2rem;">
+                შენიშვნა: ეს რაოდენობები გათვალისწინებულია ტესტირების ეტაპისთვის. 
+                საბოლოო პროდუქციის ვერსიისთვის შესაძლოა საჭირო გახდეს დამატებითი კომპონენტები.
+            </p>
+        </div>
+    </section>
+
+    <!-- Standards Section -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2>ინდუსტრიული <span class="accent">სტანდარტები</span></h2>
+                <p>საერთაშორისო ხარისხისა და უსაფრთხოების სტანდარტების დაცვა</p>
+            </div>
+
+            <div class="standards-grid">
+                <div class="standard-card">
+                    <div class="standard-name">ISO/IEC 27001</div>
+                    <p>
+                        ინფორმაციის უსაფრთხოების მენეჯმენტის სისტემა. უზრუნველყოფს, რომ დონაციის 
+                        მონაცემები, მომხმარებლის ინფორმაცია და სისტემის ოპერაციები დაცულია 
+                        არაავტორიზებული წვდომის, გამჟღავნების ან მოდიფიკაციისგან.
+                    </p>
+                </div>
+
+                <div class="standard-card">
+                    <div class="standard-name">MQTT v5.0</div>
+                    <p>
+                        IoT მონაცემთა გადაცემის პროტოკოლი. მსუბუქი, ეფექტური და საიმედო შეტყობინების 
+                        ჩარჩო, რომელიც ოპტიმიზირებულია IoT აპლიკაციებისთვის შეზღუდული ბანდგენით ან 
+                        პერიოდული კავშირით.
+                    </p>
+                </div>
+
+                <div class="standard-card">
+                    <div class="standard-name">TLS (Transport Layer Security)</div>
+                    <p>
+                        მონაცემთა კონფიდენციალურობისა და მთლიანობის დაცვა გადაცემის დროს. TLS 
+                        სერტიფიკატები სათანადოდ იმართება და განახლდება უწყვეტი უსაფრთხო ოპერაციის 
+                        შესანარჩუნებლად.
+                    </p>
+                </div>
+
+                <div class="standard-card">
+                    <div class="standard-name">IEEE 802.11 (Wi-Fi)</div>
+                    <p>
+                        უკაბელო ქსელების სტანდარტი. უზრუნველყოფს სტანდარტული ქსელური ინფრასტრუქტურის 
+                        თავსებადობას. მხარს უჭერს WPA2 და WPA3 უსაფრთხოების პროტოკოლებს.
+                    </p>
+                </div>
+
+                <div class="standard-card">
+                    <div class="standard-name">IEC 62368-1</div>
+                    <p>
+                        ელექტრონული აღჭურვილობის უსაფრთხოების მოთხოვნები. განიხილავს საფრთხეებს, 
+                        მათ შორის ელექტრო დარტყმას, ხანძარს, მექანიკურ დაზიანებასა და თერმულ საფრთხეებს.
+                    </p>
+                </div>
+
+                <div class="standard-card">
+                    <div class="standard-name">ISO 9001</div>
+                    <p>
+                        ხარისხის მენეჯმენტის სისტემები. ხარისხის უზრუნველყოფის პროცესები განვითარების, 
+                        წარმოებისა და განთავსების დროს მიჰყვება ISO 9001 პრინციპებს თანმიმდევრული 
+                        პროდუქტის ხარისხის უზრუნველსაყოფად.
+                    </p>
+                </div>
+
+                <div class="standard-card">
+                    <div class="standard-name">IEC 61000 (EMC)</div>
+                    <p>
+                        ელექტრომაგნიტური თავსებადობა. მოწყობილობა შემუშავებული იქნება მუშაობისთვის 
+                        ელექტრომაგნიტური ინტერფერენციის გამოწვევის ან მისი მიმართ მგრძნობელობის გარეშე.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section style="background: linear-gradient(180deg, transparent, rgba(10, 132, 255, 0.02));">
+        <div class="container">
+            <div class="section-header">
+                <h2>მოსალოდნელი <span class="accent">სარგებელი</span></h2>
+                <p>პროექტის დადებითი გავლენა ყველა მხარისთვის</p>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <h4>საქველმოქმედო ორგანიზაციებისთვის</h4>
+                    <ul>
+                        <li>ოპერაციული ხარჯების შემცირება 70%-ით</li>
+                        <li>დონაციების 24/7 შეგროვება</li>
+                        <li>რეალურ დროში ფინანსური მონიტორინგი</li>
+                        <li>სრული ტრანზაქციების გამჭვირვალობა</li>
+                        <li>მონაცემებზე დაფუძნებული გადაწყვეტილებები</li>
+                        <li>ადმინისტრაციული ტვირთის შემცირება</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>დონორებისთვის</h4>
+                    <ul>
+                        <li>მარტივი და სწრაფი დონაციის პროცესი</li>
+                        <li>მრავალი გადახდის ოპცია</li>
+                        <li>გამჭვირვალობა და ნდობა</li>
+                        <li>ნებისმიერ დროს ხელმისაწვდომობა</li>
+                        <li>დონაციის ისტორიის თვალყური</li>
+                        <li>უსაფრთხო ტრანზაქციები</li>
+                    </ul>
+                </div>
+
+                <div class="benefit-card">
+                    <h4>ბენეფიციარებისთვის</h4>
+                    <ul>
+                        <li>უფრო სწრაფი რესურსების მიღება</li>
+                        <li>გაზრდილი ხელმისაწვდომობა</li>
+                        <li>უკეთესი განაწილების ეფექტურობა</li>
+                        <li>გაუმჯობესებული მომსახურება</li>
+                        <li>დროული დახმარება</li>
+                        <li>საჭიროებებზე ორიენტირებული მიდგომა</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team">
+        <div class="container">
+            <div class="section-header">
+                <h2>პროექტის <span class="accent">გუნდი</span></h2>
+                <p>ილიას სახელმწიფო უნივერსიტეტი - კომპიუტერული ინჟინერია</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">გ.გ</div>
+                    <div class="member-name">გეიდარ გეიდაროვი</div>
+                    <div class="member-role">სტუდენტი</div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar">ე.მ</div>
+                    <div class="member-name">ეშგინ მურადოვი</div>
+                    <div class="member-role">სტუდენტი</div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar">ქ.ნ</div>
+                    <div class="member-name">ქანან ნოვრუზოვი</div>
+                    <div class="member-role">სტუდენტი</div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar">რ.ა</div>
+                    <div class="member-name">რიავან ალიევი</div>
+                    <div class="member-role">სტუდენტი</div>
+                </div>
+            </div>
+
+            <div class="supervisors">
+                <h4>კურსის ხელმძღვანელები</h4>
+                <p style="color: var(--light-text); font-size: 1.1rem; margin-top: 1rem;">
+                    დავით ჩხაიძე • გიორგი მოდებაძე
+                </p>
+                <p style="color: var(--lighter-text); margin-top: 1rem;">
+                    ბიზნესის, ტექნოლოგიებისა და განათლების ფაკულტეტი<br>
+                    ტექნოლოგიური სკოლა<br>
+                    დამამთავრებელი კურსის დიზაინის პროექტი A
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">საკვების შემოწირულობის აპარატი</div>
+                <p>IoT ტექნოლოგიაზე დაფუძნებული ინოვაციური გადაწყვეტა სოციალური დახმარებისთვის</p>
+                <p style="margin-top: 1rem;">ილიას სახელმწიფო უნივერსიტეტი</p>
+                <p>ბიზნესის, ტექნოლოგიებისა და განათლების ფაკულტეტი</p>
+                <p>კომპიუტერული ინჟინერიის საბაკალავრო პროგრამა</p>
+                <div class="footer-year">2025</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Animate elements on scroll
+        document.querySelectorAll('.info-card, .component-card, .timeline-item, .standard-card, .benefit-card, .team-member').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
